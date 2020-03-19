@@ -1,0 +1,41 @@
+#!/bin/sh
+
+run_program() {
+	eval program='$'$1
+	shift
+	for p in $program; do
+		command -v $p >/dev/null && {
+			exec $p $@
+			break
+		}
+	done
+}
+
+run_power() {
+	chose=$(printf "No\nYes" | dmenu $@ -i -p $opr?)
+	case $opr in
+		shutdown) act="-h"; msg="Shutting down...";;
+		  reboot) act="-r"; msg="Rebooting...";;
+	esac
+	case $chose in
+		Yes) notify-send "$msg" && sudo shutdown $act now;;
+		No)  notify-send "'$msg' canceled";;
+	esac
+}
+
+# defaults
+browser="firefox google-chrome-stable qutebrowser"
+term="st xterm lxterminal"
+filemanager="pcmanfm thunar caja"
+
+[ -f "$HOME/.dwm_run" ] && . "$HOME/.dwm_run"
+
+opr=$1
+shift
+
+case $opr in
+	shutdown|reboot) run_power $@;;
+	              *) run_program $opr $@;;
+esac
+
+exit 0
