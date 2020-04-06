@@ -86,6 +86,8 @@ print_netspeed() {
     fi
 }
 
+pgrep ${##*/} >/dev/null && pkill ${##*/}
+
 while true; do
 	xsetroot -name "$(print_music)$(print_netspeed)$(print_wifi)$(print_temp)$(print_ram)$(print_volume)$(print_datetime)"
 	sleep 1 
